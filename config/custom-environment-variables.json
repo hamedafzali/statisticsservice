@@ -1,0 +1,8 @@
+{
+  "sql": {
+    "username": "sql_username",
+    "password": "sql_password",
+    "host": "sql_host"
+  },
+  "jwtPrivateKey": "pbi_jwtPrivateKey"
+}
