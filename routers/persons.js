@@ -1,9 +1,8 @@
-const auth = require("../middleware/auth");
+const { sp, sql } = require("../connection");
 const express = require("express");
 const router = express.Router();
 const config = require("config");
 var _ = require("lodash");
-const { request } = require("express");
 router.get("/chartperson/:id/", (req, res) => {
   const { username, password, host } = config.get("sql");
   const sqlConfig = {
@@ -78,7 +77,29 @@ router.get("/chart/:id/", (req, res) => {
     });
   //res.send(users);
 });
-//router.get("/", auth, () => {});
+router.post("/chartupdate", (req, res) => {
+  const result = sp(
+    [
+      { NationalCode: req.body.nationalCode, dataType: sql.NVarChar(10) },
+      { SourceId: req.body.sourceId, dataType: sql.NVarChar(100) },
+      { Description: req.body.Description, dataType: sql.NVarChar(100) },
+      {
+        DestinationCode: req.body.destinationCode,
+        dataType: sql.NVarChar(100),
+      },
+      {
+        DestinationName: req.body.destinationName,
+        dataType: sql.NVarChar(100),
+      },
+      { DestinationId: req.body.destinationId, dataType: sql.NVarChar(100) },
+      { Tel: req.body.tel, dataType: sql.NVarChar(100) },
+      { PayDate: req.body.paydate, dataType: sql.NVarChar(100) },
+      { Registrar: req.body.Registrar, dataType: sql.NVarChar(100) },
+    ],
+    "ChangePassword"
+  );
+  result.then((r) => res.send(r));
+});
 router.get(
   "/chartupdate/:nationalcode/:sourceid/:description/:destinationcode/:destinationname/:destinationid/:tel/:paydate/:registrar",
 
