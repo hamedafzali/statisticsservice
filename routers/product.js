@@ -1,4 +1,4 @@
-const auth = require("../middleware/auth");
+const { sp, sql } = require("../connection");
 const express = require("express");
 const router = express.Router();
 const config = require("config");
@@ -11,7 +11,6 @@ const sqlConfig = {
   server: host,
   database: "Statistics",
 };
-const sql = require("mssql");
 
 router.get("/getproducttitle/:id/", (req, res) => {
   sql
@@ -121,4 +120,18 @@ router.get(
       });
   }
 );
+
+router.get("/karanehstatus", (req, res) => {
+  const result = sp([], "KaranehStatus");
+  result.then((r) => res.send(r[0]));
+});
+
+router.get("/karanehpersonelreport/:code", (req, res) => {
+  const result = sp(
+    [{ Code: req.params.code, dataType: sql.NVarChar(10) }],
+    "KaranehPersonelReport"
+  );
+  result.then((r) => res.send(r));
+});
+
 module.exports = router;

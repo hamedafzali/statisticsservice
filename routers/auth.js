@@ -3,27 +3,25 @@ const jwt = require("jsonwebtoken");
 const express = require("express");
 const router = express.Router();
 const config = require("config");
-
-router.get("/checkuser/:username/:password", (req, res) => {
-  const { username, password, host } = config.get("sql");
-  const sqlConfig = {
-    user: username,
-    password: password,
-    server: host,
-    database: "Statistics",
-    options: {
-      encrypt: true,
-      enableArithAbort: true,
-    },
-  };
-
+const { username, password, host } = config.get("sql");
+const sqlConfig = {
+  user: username,
+  password: password,
+  server: host,
+  database: "Statistics",
+  options: {
+    encrypt: true,
+    enableArithAbort: true,
+  },
+};
+router.post("/checkuser", (req, res) => {
   sql
     .connect(sqlConfig)
     .then((pool) => {
       return pool
         .request()
-        .input("NationalCode", sql.NVarChar(10), req.params.username)
-        .input("Password", sql.NVarChar(100), req.params.password)
+        .input("NationalCode", sql.NVarChar(10), req.body.username)
+        .input("Password", sql.NVarChar(100), req.body.password)
         .execute("CheckUser");
     })
     .then((result) => {
@@ -61,21 +59,6 @@ router.get("/accesscontrol/:groupid/:link", (req, res) => {
   result.then((r) => res.send(r));
 });
 
-// router.get(
-//   "/changepassword/:nationalcode/:oldpassword/:newpassword",
-//   (req, res) => {
-//     const result = sp(
-//       [
-//         { NationalCode: req.params.nationalcode, dataType: sql.NVarChar(10) },
-//         { OldPassword: req.params.oldpassword, dataType: sql.NVarChar(100) },
-//         { NewPassword: req.params.newpassword, dataType: sql.NVarChar(100) },
-//       ],
-//       "ChangePassword"
-//     );
-//     result.then((r) => res.send(r));
-//   }
-// );
-
 router.post("/changepassword", (req, res) => {
   const result = sp(
     [
@@ -88,32 +71,6 @@ router.post("/changepassword", (req, res) => {
   result.then((r) => res.send(r));
 });
 
-// router.get("/resetpassword/:nationalcode/:newpassword", (req, res) => {
-//   const { username, password, host } = config.get("sql");
-//   const sqlConfig = {
-//     user: username,
-//     password: password,
-//     server: host,
-//     database: "Statistics",
-//   };
-//   const sql = require("mssql");
-//   sql
-//     .connect(sqlConfig)
-//     .then((pool) => {
-//       console.log(req.params.username);
-//       return pool
-//         .request()
-//         .input("NationalCode", sql.NVarChar(10), req.params.nationalcode)
-//         .input("NewPassword", sql.NVarChar(100), req.params.newpassword)
-//         .execute("ResetPassword");
-//     })
-//     .then((result) => {
-//       res.send(result.recordsets[0]);
-//     })
-//     .catch((err) => {
-//       console.log(err);
-//     });
-// });
 router.post("/resetpassword", (req, res) => {
   const result = sp(
     [
@@ -125,14 +82,6 @@ router.post("/resetpassword", (req, res) => {
   result.then((r) => res.send(r));
 });
 router.get("/karanehaccress/:nationalcode/:karanehaccesstype", (req, res) => {
-  //console.log(req.header["x-auth-token"]);
-  const { username, password, host } = config.get("sql");
-  const sqlConfig = {
-    user: username,
-    password: password,
-    server: host, // You can use 'localhost\\instance' to connect to named instance
-    database: "Statistics",
-  };
   const sql = require("mssql");
   sql
     .connect(sqlConfig)
