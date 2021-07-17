@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const express = require("express");
 const router = express.Router();
 const config = require("config");
+const auth = require("../middleware/auth");
 const { username, password, host } = config.get("sql");
 const sqlConfig = {
   user: username,
@@ -40,7 +41,7 @@ router.post("/checkuser", (req, res) => {
       console.log(err);
     });
 });
-router.get("/getmenu/:groupid", (req, res) => {
+router.get("/getmenu/:groupid", auth, (req, res) => {
   const result = sp(
     [{ groupid: req.params.groupid, dataType: sql.NVarChar(10) }],
     "GetMenuData"
@@ -48,7 +49,7 @@ router.get("/getmenu/:groupid", (req, res) => {
   result.then((r) => res.send(r));
 });
 
-router.get("/accesscontrol/:groupid/:link", (req, res) => {
+router.get("/accesscontrol/:groupid/:link", auth, (req, res) => {
   const result = sp(
     [
       { GroupId: req.params.groupid, dataType: sql.Int },
@@ -59,7 +60,7 @@ router.get("/accesscontrol/:groupid/:link", (req, res) => {
   result.then((r) => res.send(r));
 });
 
-router.post("/changepassword", (req, res) => {
+router.post("/changepassword", auth, (req, res) => {
   const result = sp(
     [
       { NationalCode: req.body.nationalcode, dataType: sql.NVarChar(10) },
@@ -71,7 +72,7 @@ router.post("/changepassword", (req, res) => {
   result.then((r) => res.send(r));
 });
 
-router.post("/resetpassword", (req, res) => {
+router.post("/resetpassword", auth, (req, res) => {
   const result = sp(
     [
       { NationalCode: req.body.nationalcode, dataType: sql.NVarChar(10) },
@@ -81,23 +82,27 @@ router.post("/resetpassword", (req, res) => {
   );
   result.then((r) => res.send(r));
 });
-router.get("/karanehaccress/:nationalcode/:karanehaccesstype", (req, res) => {
-  const sql = require("mssql");
-  sql
-    .connect(sqlConfig)
-    .then((pool) => {
-      console.log(req.params.username);
-      return pool
-        .request()
-        .input("NationalCode", sql.NVarChar(10), req.params.nationalcode)
-        .input("KaranehAccessTypeId", sql.Int, req.params.karanehaccesstype)
-        .execute("CheckKaranehAccess");
-    })
-    .then((result) => {
-      res.send(result.recordsets[0]);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-});
+router.get(
+  "/karanehaccress/:nationalcode/:karanehaccesstype",
+  auth,
+  (req, res) => {
+    const sql = require("mssql");
+    sql
+      .connect(sqlConfig)
+      .then((pool) => {
+        console.log(req.params.username);
+        return pool
+          .request()
+          .input("NationalCode", sql.NVarChar(10), req.params.nationalcode)
+          .input("KaranehAccessTypeId", sql.Int, req.params.karanehaccesstype)
+          .execute("CheckKaranehAccess");
+      })
+      .then((result) => {
+        res.send(result.recordsets[0]);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+);
 module.exports = router;

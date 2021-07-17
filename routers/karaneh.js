@@ -11,7 +11,7 @@ const sqlConfig = {
   server: host, // You can use 'localhost\\instance' to connect to named instance
   database: "Statistics",
 };
-router.get("/karanehdata/:ratio/:diff/:paydate", (req, res) => {
+router.get("/karanehdata/:ratio/:diff/:paydate", auth, (req, res) => {
   sql
     .connect(sqlConfig)
     .then((pool) => {
@@ -29,7 +29,7 @@ router.get("/karanehdata/:ratio/:diff/:paydate", (req, res) => {
       console.log(err);
     });
 });
-router.get("/karanehdata1/:ratio/:diff/:paydate/:val", (req, res) => {
+router.get("/karanehdata1/:ratio/:diff/:paydate/:val", auth, (req, res) => {
   sql
     .connect(sqlConfig)
     .then((pool) => {
@@ -48,7 +48,7 @@ router.get("/karanehdata1/:ratio/:diff/:paydate/:val", (req, res) => {
       console.log(err);
     });
 });
-router.get("/getsupervisors/", (req, res) => {
+router.get("/getsupervisors/", auth, (req, res) => {
   sql
     .connect(sqlConfig)
     .then((pool) => {
@@ -61,7 +61,7 @@ router.get("/getsupervisors/", (req, res) => {
       console.log(err);
     });
 });
-router.get("/getkaranehdates/", (req, res) => {
+router.get("/getkaranehdates/", auth, (req, res) => {
   sql
     .connect(sqlConfig)
     .then((pool) => {
@@ -74,7 +74,7 @@ router.get("/getkaranehdates/", (req, res) => {
       console.log(err);
     });
 });
-router.get("/getsupervisorsrank/:ratio/:paydate", (req, res) => {
+router.get("/getsupervisorsrank/:ratio/:paydate", auth, (req, res) => {
   sql
     .connect(sqlConfig)
     .then((pool) => {
@@ -91,7 +91,7 @@ router.get("/getsupervisorsrank/:ratio/:paydate", (req, res) => {
       console.log(err);
     });
 });
-router.get("/getbranchesrank/:ratio/:paydate", (req, res) => {
+router.get("/getbranchesrank/:ratio/:paydate", auth, (req, res) => {
   sql
     .connect(sqlConfig)
     .then((pool) => {
@@ -108,7 +108,7 @@ router.get("/getbranchesrank/:ratio/:paydate", (req, res) => {
       console.log(err);
     });
 });
-router.get("/getkarnameho/:paydate", (req, res) => {
+router.get("/getkarnameho/:paydate", auth, (req, res) => {
   sql
     .connect(sqlConfig)
     .then((pool) => {
@@ -124,7 +124,7 @@ router.get("/getkarnameho/:paydate", (req, res) => {
       console.log(err);
     });
 });
-router.get("/getkarnamehsh/:paydate", (req, res) => {
+router.get("/getkarnamehsh/:paydate", auth, (req, res) => {
   sql
     .connect(sqlConfig)
     .then((pool) => {
@@ -140,7 +140,7 @@ router.get("/getkarnamehsh/:paydate", (req, res) => {
       console.log(err);
     });
 });
-router.get("/getaddition/:paydate", (req, res) => {
+router.get("/getaddition/:paydate", auth, (req, res) => {
   sql
     .connect(sqlConfig)
     .then((pool) => {
@@ -158,6 +158,7 @@ router.get("/getaddition/:paydate", (req, res) => {
 });
 router.get(
   "/setkaranehparams/:paydate/:min/:max/:ratio/:setadhour/:safhour",
+  auth,
   (req, res) => {
     sql
       .connect(sqlConfig)
@@ -183,30 +184,35 @@ router.get(
       });
   }
 );
-router.get("/getpersonskaraneh/:managernationalcode/:paydate/", (req, res) => {
-  sql
-    .connect(sqlConfig)
-    .then((pool) => {
-      // Stored procedure
-      return pool
-        .request()
-        .input("PayDate", sql.NVarChar(60), req.params.paydate)
-        .input(
-          "ManagerNationalCode",
-          sql.NVarChar(100),
-          req.params.managernationalcode
-        )
-        .execute("GetPersonsKaraneh");
-    })
-    .then((result) => {
-      res.send(result.recordsets[0]);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-});
+router.get(
+  "/getpersonskaraneh/:managernationalcode/:paydate/",
+  auth,
+  (req, res) => {
+    sql
+      .connect(sqlConfig)
+      .then((pool) => {
+        // Stored procedure
+        return pool
+          .request()
+          .input("PayDate", sql.NVarChar(60), req.params.paydate)
+          .input(
+            "ManagerNationalCode",
+            sql.NVarChar(100),
+            req.params.managernationalcode
+          )
+          .execute("GetPersonsKaraneh");
+      })
+      .then((result) => {
+        res.send(result.recordsets[0]);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+);
 router.get(
   "/getpersonelkaraneh/:paydate/:ratiosaf/:ratiosetad/:ratio",
+  auth,
   (req, res) => {
     sql
       .connect(sqlConfig)
@@ -229,6 +235,7 @@ router.get(
 );
 router.get(
   "/karanehinsert/:nationalcode/:a50/:a30/:a20/:paydate/:registrar",
+  auth,
   (req, res) => {
     sql
       .connect(sqlConfig)
@@ -251,26 +258,35 @@ router.get(
       });
   }
 );
-router.get("/getpersonskaranehremain/:nationalcode/:paydate", (req, res) => {
-  sql
-    .connect(sqlConfig)
-    .then((pool) => {
-      return pool
-        .request()
-        .input("PayDate", sql.NVarChar(6), req.params.paydate)
-        .input("ManagerNationalCode", sql.NVarChar(10), req.params.nationalcode)
-        .execute("GetPersonsKaranehRemain");
-    })
-    .then((result) => {
-      res.send(result.recordsets[0]);
-    })
-    .catch((err) => {
-      // ... error checks
-      console.log(err);
-    });
-});
+router.get(
+  "/getpersonskaranehremain/:nationalcode/:paydate",
+  auth,
+  (req, res) => {
+    sql
+      .connect(sqlConfig)
+      .then((pool) => {
+        return pool
+          .request()
+          .input("PayDate", sql.NVarChar(6), req.params.paydate)
+          .input(
+            "ManagerNationalCode",
+            sql.NVarChar(10),
+            req.params.nationalcode
+          )
+          .execute("GetPersonsKaranehRemain");
+      })
+      .then((result) => {
+        res.send(result.recordsets[0]);
+      })
+      .catch((err) => {
+        // ... error checks
+        console.log(err);
+      });
+  }
+);
 router.get(
   "/managerskaranehinsert/:nationalcode/:paydate/:amount",
+  auth,
   (req, res) => {
     sql
       .connect(sqlConfig)
@@ -290,7 +306,7 @@ router.get(
       });
   }
 );
-router.get("/karanehaccesslist/:type", (req, res) => {
+router.get("/karanehaccesslist/:type", auth, (req, res) => {
   sql
     .connect(sqlConfig)
     .then((pool) => {
@@ -306,7 +322,7 @@ router.get("/karanehaccesslist/:type", (req, res) => {
       console.log(err);
     });
 });
-router.get("/karanehaccessupdate/:id", (req, res) => {
+router.get("/karanehaccessupdate/:id", auth, (req, res) => {
   sql
     .connect(sqlConfig)
     .then((pool) => {
@@ -322,7 +338,7 @@ router.get("/karanehaccessupdate/:id", (req, res) => {
       console.error(err);
     });
 });
-router.get("/karanehaccessupdateall/:type/:status", (req, res) => {
+router.get("/karanehaccessupdateall/:type/:status", auth, (req, res) => {
   sql
     .connect(sqlConfig)
     .then((pool) => {
@@ -339,21 +355,21 @@ router.get("/karanehaccessupdateall/:type/:status", (req, res) => {
       console.error(err);
     });
 });
-router.get("/getkarnamehpersontotal/:paydate", (req, res) => {
+router.get("/getkarnamehpersontotal/:paydate", auth, (req, res) => {
   const result = sp(
     [{ Paydate: req.params.paydate, dataType: sql.NVarChar(10) }],
     "GetKarnamehPersonTotal"
   );
   result.then((r) => res.send(r));
 });
-router.get("/getkarnamehbranchtotal/:paydate", (req, res) => {
+router.get("/getkarnamehbranchtotal/:paydate", auth, (req, res) => {
   const result = sp(
     [{ Paydate: req.params.paydate, dataType: sql.NVarChar(10) }],
     "GetKarnamehBranchTotal"
   );
   result.then((r) => res.send(r));
 });
-router.get("/getkarnamehsupervisortotal/:paydate", (req, res) => {
+router.get("/getkarnamehsupervisortotal/:paydate", auth, (req, res) => {
   const result = sp(
     [{ Paydate: req.params.paydate, dataType: sql.NVarChar(10) }],
     "GetKarnamehSupervisorTotal"
