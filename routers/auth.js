@@ -41,7 +41,7 @@ router.post("/checkuser", (req, res) => {
       console.log(err);
     });
 });
-router.get("/getmenu/:groupid", auth, (req, res) => {
+router.get("/getmenu/:groupid" /*, auth*/, (req, res) => {
   const result = sp(
     [{ groupid: req.params.groupid, dataType: sql.NVarChar(10) }],
     "GetMenuData"
@@ -84,7 +84,7 @@ router.post("/resetpassword", auth, (req, res) => {
 });
 router.get(
   "/karanehaccress/:nationalcode/:karanehaccesstype",
-  auth,
+  /*auth,*/
   (req, res) => {
     const sql = require("mssql");
     sql

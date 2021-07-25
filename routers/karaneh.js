@@ -306,22 +306,25 @@ router.get(
       });
   }
 );
-router.get("/karanehaccesslist/:type", auth, (req, res) => {
-  sql
-    .connect(sqlConfig)
-    .then((pool) => {
-      return pool
-        .request()
-        .input("type", sql.NVarChar(10), req.params.type)
-        .execute("KaranehAccessList");
-    })
-    .then((result) => {
-      res.send(result.recordsets[0]);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-});
+router.get(
+  "/karanehaccesslist/:type",
+  /* auth,*/ (req, res) => {
+    sql
+      .connect(sqlConfig)
+      .then((pool) => {
+        return pool
+          .request()
+          .input("type", sql.NVarChar(10), req.params.type)
+          .execute("KaranehAccessList");
+      })
+      .then((result) => {
+        res.send(result.recordsets[0]);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+);
 router.get("/karanehaccessupdate/:id", auth, (req, res) => {
   sql
     .connect(sqlConfig)

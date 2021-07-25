@@ -79,14 +79,17 @@ router.get(
     result.then((r) => res.send(r[0]));
   }
 );
+router.get("/budgetgetdatawithcode", auth, (req, res) => {
+  const result = sp([], "BudgetGetDataWithCode");
+  result.then((r) => res.send(r));
+});
 router.get(
-  "/budgetgetdatawithcode",
+  "/budgetsummary",
   /* auth, */ (req, res) => {
-    const result = sp([], "BudgetGetDataWithCode");
+    const result = sp([], "BudgetSummaryReport");
     result.then((r) => res.send(r));
   }
 );
-
 router.get("/budgetdocumentgetdata/:nationalcode", (req, res) => {
   const result = sp(
     [{ NationalCode: req.params.nationalcode, dataType: sql.NVarChar(10) }],
