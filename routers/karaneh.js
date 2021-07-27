@@ -325,39 +325,45 @@ router.get(
       });
   }
 );
-router.get("/karanehaccessupdate/:id", auth, (req, res) => {
-  sql
-    .connect(sqlConfig)
-    .then((pool) => {
-      return pool
-        .request()
-        .input("BranchCode", sql.NVarChar(10), req.params.id)
-        .execute("KaranehAccessUpdate");
-    })
-    .then((result) => {
-      res.send(result.recordsets[0]);
-    })
-    .catch((err) => {
-      console.error(err);
-    });
-});
-router.get("/karanehaccessupdateall/:type/:status", auth, (req, res) => {
-  sql
-    .connect(sqlConfig)
-    .then((pool) => {
-      return pool
-        .request()
-        .input("Type", sql.NVarChar(10), req.params.type)
-        .input("Status", sql.Int, req.params.status)
-        .execute("KaranehAccessUpdateAll");
-    })
-    .then((result) => {
-      res.send(result.recordsets[0]);
-    })
-    .catch((err) => {
-      console.error(err);
-    });
-});
+router.get(
+  "/karanehaccessupdate/:id",
+  /* auth,*/ (req, res) => {
+    sql
+      .connect(sqlConfig)
+      .then((pool) => {
+        return pool
+          .request()
+          .input("BranchCode", sql.NVarChar(10), req.params.id)
+          .execute("KaranehAccessUpdate");
+      })
+      .then((result) => {
+        res.send(result.recordsets[0]);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }
+);
+router.get(
+  "/karanehaccessupdateall/:type/:status",
+  /*auth,*/ (req, res) => {
+    sql
+      .connect(sqlConfig)
+      .then((pool) => {
+        return pool
+          .request()
+          .input("Type", sql.NVarChar(10), req.params.type)
+          .input("Status", sql.Int, req.params.status)
+          .execute("KaranehAccessUpdateAll");
+      })
+      .then((result) => {
+        res.send(result.recordsets[0]);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }
+);
 router.get("/getkarnamehpersontotal/:paydate", auth, (req, res) => {
   const result = sp(
     [{ Paydate: req.params.paydate, dataType: sql.NVarChar(10) }],

@@ -37,7 +37,7 @@ app.use("/api/product", product);
 app.use("/api/budget", budget);
 app.use("/api/messages", messages);
 app.use("/api/tasks", tasks);
-
+app.use("/", express.static("./public"));
 const port = process.env.port || 8080;
 app.listen(port, () => {
   console.log(`Listener is ready on port ${port} ...`);
