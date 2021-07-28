@@ -31,6 +31,22 @@ router.post("/budgetDocumentInsert", auth, (req, res) => {
   );
   result.then((r) => res.send(r[0]));
 });
+router.post("/budgetRequestInsert", auth, (req, res) => {
+  //console.log(req.body);
+  const result = sp(
+    [
+      { Date: req.body.date, dataType: sql.NVarChar(10) },
+      { DocumentTypeId: req.body.documentTypeId, dataType: sql.Int },
+      { Title: req.body.documentTitle, dataType: sql.NVarChar(100) },
+      { DestinationCode: req.body.destinationCode, dataType: sql.NVarChar(10) },
+      { UnitCode: req.body.unitCode, dataType: sql.NVarChar(10) },
+      { Registrar: req.body.registrar, dataType: sql.NVarChar(10) },
+      { Status: req.body.status, dataType: sql.Int },
+    ],
+    "budgetDocumentInsert"
+  );
+  result.then((r) => res.send(r[0]));
+});
 router.post("/budgetinsert", auth, (req, res) => {
   //console.log("budgetinsert", req.body);
   const result = sp(
@@ -160,7 +176,20 @@ router.get("/budgetbalance/:code", (req, res) => {
   );
   result.then((r) => res.send(r[0]));
 });
-
+router.get("/budgetbalanceeblagh/:code", (req, res) => {
+  const result = sp(
+    [{ Code: req.params.code, dataType: sql.NVarChar(10) }],
+    "BudgetBalanceEblagh"
+  );
+  result.then((r) => res.send(r[0]));
+});
+router.get("/budgetbalanceeslahieh/:code", (req, res) => {
+  const result = sp(
+    [{ Code: req.params.code, dataType: sql.NVarChar(10) }],
+    "BudgetBalanceEslahieh"
+  );
+  result.then((r) => res.send(r[0]));
+});
 module.exports = router;
 
 function transformToTree(arr) {
