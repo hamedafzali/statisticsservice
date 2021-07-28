@@ -61,7 +61,7 @@ router.get("/getsupervisors/", auth, (req, res) => {
       console.log(err);
     });
 });
-router.get("/getkaranehdates/", auth, (req, res) => {
+router.get("/getkaranehdates/" /*, auth*/, (req, res) => {
   sql
     .connect(sqlConfig)
     .then((pool) => {
