@@ -3,19 +3,25 @@ const express = require("express");
 const router = express.Router();
 var _ = require("lodash");
 const auth = require("../middleware/auth");
-router.get("/getbudgettitle/:code", auth, (req, res) => {
-  // console.log(req.body.code);
-  const result = sp(
-    [{ Code: req.params.code, dataType: sql.NVarChar(11) }],
-    "getBudgetTitle"
-  );
-  result.then((r) => res.send(r[0]));
-});
-router.get("/getbudgetunits", auth, (req, res) => {
-  const result = sp([], "getBudgetUnits");
-  result.then((r) => res.send(r));
-});
-router.post("/budgetDocumentInsert", auth, (req, res) => {
+router.get(
+  "/getbudgettitle/:code",
+  /*auth,*/ (req, res) => {
+    // console.log(req.body.code);
+    const result = sp(
+      [{ Code: req.params.code, dataType: sql.NVarChar(11) }],
+      "getBudgetTitle"
+    );
+    result.then((r) => res.send(r[0]));
+  }
+);
+router.get(
+  "/getbudgetunits",
+  /*auth,*/ (req, res) => {
+    const result = sp([], "getBudgetUnits");
+    result.then((r) => res.send(r));
+  }
+);
+router.post("/budgetDocumentInsert" /*auth,*/, (req, res) => {
   //console.log(req.body);
   const result = sp(
     [
@@ -31,8 +37,8 @@ router.post("/budgetDocumentInsert", auth, (req, res) => {
   );
   result.then((r) => res.send(r[0]));
 });
-router.post("/budgetRequestInsert", auth, (req, res) => {
-  //console.log(req.body);
+router.post("/budgetRequestInsert" /*auth,*/, (req, res) => {
+  console.log(req.body);
   const result = sp(
     [
       { Date: req.body.date, dataType: sql.NVarChar(10) },
@@ -43,11 +49,11 @@ router.post("/budgetRequestInsert", auth, (req, res) => {
       { Registrar: req.body.registrar, dataType: sql.NVarChar(10) },
       { Status: req.body.status, dataType: sql.Int },
     ],
-    "budgetDocumentInsert"
+    "budgetRequestInsert"
   );
   result.then((r) => res.send(r[0]));
 });
-router.post("/budgetinsert", auth, (req, res) => {
+router.post("/budgetinsert" /*auth,*/, (req, res) => {
   //console.log("budgetinsert", req.body);
   const result = sp(
     [
@@ -61,7 +67,7 @@ router.post("/budgetinsert", auth, (req, res) => {
   );
   result.then((r) => res.send(r[0]));
 });
-router.post("/budgetdocumentdetailinsert", auth, (req, res) => {
+router.post("/budgetdocumentdetailinsert" /*auth,*/, (req, res) => {
   //console.log(req.body);
   const result = sp(
     [
@@ -78,7 +84,24 @@ router.post("/budgetdocumentdetailinsert", auth, (req, res) => {
   //result.then((r) => console.log(r));
   result.then((r) => res.send(r[0]));
 });
-router.get("/budgetgetdata", auth, (req, res) => {
+router.post("/budgetrdocumentdetailinsert" /*auth,*/, (req, res) => {
+  //console.log(req.body);
+  const result = sp(
+    [
+      { PId: req.body.pid, dataType: sql.Int },
+      { Title: req.body.title, dataType: sql.NVarChar(500) },
+      { Code: req.body.code, dataType: sql.NVarChar(50) },
+      { Amount: req.body.amount, dataType: sql.Decimal(20) },
+      { Description: req.body.description, dataType: sql.NVarChar(500) },
+      { Count: req.body.count, dataType: sql.Int },
+      { Id: req.body.id, dataType: sql.Int },
+    ],
+    "BudgetRDocumentDetailInsert"
+  );
+  //result.then((r) => console.log(r));
+  result.then((r) => res.send(r[0]));
+});
+router.get("/budgetgetdata" /*, auth*/, (req, res) => {
   const result = sp([], "BudgetGetData");
   result.then((r) => res.send(JSON.stringify(transformToTree(r), null, 2)));
 });
@@ -95,7 +118,7 @@ router.get(
     result.then((r) => res.send(r[0]));
   }
 );
-router.get("/budgetgetdatawithcode", auth, (req, res) => {
+router.get("/budgetgetdatawithcode" /*, auth*/, (req, res) => {
   const result = sp([], "BudgetGetDataWithCode");
   result.then((r) => res.send(r));
 });
@@ -106,6 +129,13 @@ router.get(
     result.then((r) => res.send(r));
   }
 );
+router.get(
+  "/budgetnewrequests",
+  /* auth, */ (req, res) => {
+    const result = sp([], "BudgetNewRequests");
+    result.then((r) => res.send(r));
+  }
+);
 router.get("/budgetdocumentgetdata/:nationalcode", (req, res) => {
   const result = sp(
     [{ NationalCode: req.params.nationalcode, dataType: sql.NVarChar(10) }],
@@ -113,23 +143,49 @@ router.get("/budgetdocumentgetdata/:nationalcode", (req, res) => {
   );
   result.then((r) => res.send(r));
 });
-
-router.get("/budgetdocumentgetrow/:id", auth, (req, res) => {
+router.get("/budgetrdocumentgetdata/:nationalcode", (req, res) => {
+  const result = sp(
+    [{ NationalCode: req.params.nationalcode, dataType: sql.NVarChar(10) }],
+    "BudgetRDocumentGetData"
+  );
+  result.then((r) => res.send(r));
+});
+router.get("/budgetdocumentgetrow/:id" /*auth,*/, (req, res) => {
   const result = sp(
     [{ Id: req.params.id, dataType: sql.Int }],
     "BudgetDocumentGetRow"
   );
   result.then((r) => res.send(r));
 });
-
-router.get("/budgetdocumentdetailgetdata/:pid", auth, (req, res) => {
+router.get("/budgetrdocumentgetrow/:id" /*auth,*/, (req, res) => {
   const result = sp(
-    [{ PId: req.params.pid, dataType: sql.Int }],
-    "BudgetDocumentDetailGetData"
+    [{ Id: req.params.id, dataType: sql.Int }],
+    "BudgetRDocumentGetRow"
   );
   result.then((r) => res.send(r));
 });
-router.post("/budgetcommit", auth, (req, res) => {
+
+router.get(
+  "/budgetdocumentdetailgetdata/:pid",
+  /*auth,*/ (req, res) => {
+    const result = sp(
+      [{ PId: req.params.pid, dataType: sql.Int }],
+      "BudgetDocumentDetailGetData"
+    );
+    result.then((r) => res.send(r));
+  }
+);
+router.get(
+  "/budgetrdocumentdetailgetdata/:pid",
+  /*auth,*/ (req, res) => {
+    const result = sp(
+      [{ PId: req.params.pid, dataType: sql.Int }],
+      "BudgetRDocumentDetailGetData"
+    );
+    result.then((r) => res.send(r));
+  }
+);
+router.post("/budgetcommit" /*auth,*/, (req, res) => {
   //console.log(req.body);
   const result = sp(
     [
@@ -140,7 +196,18 @@ router.post("/budgetcommit", auth, (req, res) => {
   );
   result.then((r) => res.send(r[0]));
 });
-router.post("/budgetuncommit", auth, (req, res) => {
+router.post("/rbudgetcommit" /*auth,*/, (req, res) => {
+  //console.log(req.body);
+  const result = sp(
+    [
+      { NationalCode: req.body.nationalcode, dataType: sql.NVarChar(10) },
+      { Id: req.body.id, dataType: sql.Int },
+    ],
+    "RBudgetCommit"
+  );
+  result.then((r) => res.send(r[0]));
+});
+router.post("/budgetuncommit" /*auth,*/, (req, res) => {
   //console.log(req.body);
   const result = sp(
     [
@@ -151,8 +218,8 @@ router.post("/budgetuncommit", auth, (req, res) => {
   );
   result.then((r) => res.send(r[0]));
 });
-router.post("/budgetdetaildelete", auth, (req, res) => {
-  console.log(req.body);
+router.post("/budgetdetaildelete" /*auth,*/, (req, res) => {
+  //console.log(req.body);
   const result = sp(
     [
       { NationalCode: req.body.nationalcode, dataType: sql.NVarChar(10) },
@@ -162,7 +229,18 @@ router.post("/budgetdetaildelete", auth, (req, res) => {
   );
   result.then((r) => res.send(r[0]));
 });
-router.get("/budgetdocumentsummary/:pid", auth, (req, res) => {
+router.post("/budgetrdetaildelete" /*auth,*/, (req, res) => {
+  //console.log(req.body);
+  const result = sp(
+    [
+      { NationalCode: req.body.nationalcode, dataType: sql.NVarChar(10) },
+      { Id: req.body.id, dataType: sql.Int },
+    ],
+    "BudgetRDetailDelete"
+  );
+  result.then((r) => res.send(r[0]));
+});
+router.get("/budgetdocumentsummary/:pid" /*auth,*/, (req, res) => {
   const result = sp(
     [{ PId: req.params.pid, dataType: sql.Int }],
     "BudgetDocumentSummary"

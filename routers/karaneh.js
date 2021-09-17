@@ -11,24 +11,27 @@ const sqlConfig = {
   server: host, // You can use 'localhost\\instance' to connect to named instance
   database: "Statistics",
 };
-router.get("/karanehdata/:ratio/:diff/:paydate", auth, (req, res) => {
-  sql
-    .connect(sqlConfig)
-    .then((pool) => {
-      return pool
-        .request()
-        .input("Ratio", sql.Float, req.params.ratio)
-        .input("Diff", sql.Float, req.params.diff)
-        .input("PayDate", sql.NVarChar(10), req.params.paydate)
-        .execute("GetKaranehData");
-    })
-    .then((result) => {
-      res.send(result.recordsets[0][0]);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-});
+router.get(
+  "/karanehdata/:ratio/:diff/:paydate",
+  /* auth,*/ (req, res) => {
+    sql
+      .connect(sqlConfig)
+      .then((pool) => {
+        return pool
+          .request()
+          .input("Ratio", sql.Float, req.params.ratio)
+          .input("Diff", sql.Float, req.params.diff)
+          .input("PayDate", sql.NVarChar(10), req.params.paydate)
+          .execute("GetKaranehData");
+      })
+      .then((result) => {
+        res.send(result.recordsets[0][0]);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+);
 router.get("/karanehdata1/:ratio/:diff/:paydate/:val", auth, (req, res) => {
   sql
     .connect(sqlConfig)
@@ -385,4 +388,14 @@ router.get("/getkarnamehsupervisortotal/:paydate", auth, (req, res) => {
   );
   result.then((r) => res.send(r));
 });
+router.get(
+  "/karanehsummary/:unitcode",
+  /*auth,*/ (req, res) => {
+    const result = sp(
+      [{ UnitCode: req.params.unitcode, dataType: sql.NVarChar(10) }],
+      "KaranehSummary"
+    );
+    result.then((r) => res.send(r));
+  }
+);
 module.exports = router;
