@@ -1,7 +1,8 @@
 const express = require("express");
 const app = express();
 const morgan = require("morgan");
-const bodyParser = require("body-parser");
+//const bodyParser = require("body-parser");
+
 const config = require("config");
 const auth = require("./routers/auth");
 const persons = require("./routers/persons");
@@ -10,17 +11,20 @@ const product = require("./routers/product");
 const budget = require("./routers/budget");
 const messages = require("./routers/messages");
 const tasks = require("./routers/tasks");
+const files = require("./routers/files");
+const fileUpload = require("express-fileupload");
 var cors = require("cors");
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("client"));
 app.use(morgan("tiny"));
-app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "X-Requested-With");
-  next();
-});
+app.use(fileUpload());
+// app.use(function (req, res, next) {
+//   res.header("Access-Control-Allow-Origin", "*");
+//   res.header("Access-Control-Allow-Headers", "X-Requested-With");
+//   next();
+// });
 
 //app.use(bodyParser.urlencoded({ extended: true }));
 //app.use(bodyParser.json());
@@ -37,6 +41,7 @@ app.use("/api/product", product);
 app.use("/api/budget", budget);
 app.use("/api/messages", messages);
 app.use("/api/tasks", tasks);
+app.use("/api/files", files);
 app.use("/", express.static("./public"));
 const port = process.env.port || 8080;
 app.listen(port, () => {
