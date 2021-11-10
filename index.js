@@ -12,6 +12,7 @@ const budget = require("./routers/budget");
 const messages = require("./routers/messages");
 const tasks = require("./routers/tasks");
 const files = require("./routers/files");
+const baje = require("./routers/baje");
 const fileUpload = require("express-fileupload");
 var cors = require("cors");
 app.use(cors());
@@ -42,6 +43,7 @@ app.use("/api/budget", budget);
 app.use("/api/messages", messages);
 app.use("/api/tasks", tasks);
 app.use("/api/files", files);
+app.use("/api/baje", baje);
 app.use("/", express.static("./public"));
 const port = process.env.port || 8080;
 app.listen(port, () => {
