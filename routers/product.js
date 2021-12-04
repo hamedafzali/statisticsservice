@@ -125,6 +125,13 @@ router.get("/karanehstatus", (req, res) => {
   const result = sp([], "KaranehStatus");
   result.then((r) => res.send(r[0]));
 });
+router.get("/karanehstatuslist/:type", (req, res) => {
+  const result = sp(
+    [{ Type: req.params.type, dataType: sql.NVarChar(50) }],
+    "KaranehStatusList"
+  );
+  result.then((r) => res.send(r));
+});
 
 router.get("/karanehpersonelreport/:code", (req, res) => {
   const result = sp(
@@ -134,4 +141,16 @@ router.get("/karanehpersonelreport/:code", (req, res) => {
   result.then((r) => res.send(r));
 });
 
+router.get("/producttype", (req, res) => {
+  const result = sp([], "GetProductType");
+  result.then((r) => res.send(r));
+});
+
+router.get("/productfinishingoperation/:level", (req, res) => {
+  const result = sp(
+    [{ Level: req.params.level, dataType: sql.NVarChar(20) }],
+    "ProductFinishingOperation"
+  );
+  result.then((r) => res.send(r));
+});
 module.exports = router;

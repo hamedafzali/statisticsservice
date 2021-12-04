@@ -310,14 +310,16 @@ router.get(
   }
 );
 router.get(
-  "/karanehaccesslist/:type",
+  "/karanehaccesslist/:type/:id",
   /* auth,*/ (req, res) => {
+    console.log(req.params);
     sql
       .connect(sqlConfig)
       .then((pool) => {
         return pool
           .request()
           .input("type", sql.NVarChar(10), req.params.type)
+          .input("Id", sql.Int, req.params.id)
           .execute("KaranehAccessList");
       })
       .then((result) => {
@@ -398,4 +400,47 @@ router.get(
     result.then((r) => res.send(r));
   }
 );
+
+router.get("/Karnamehsummary", (req, res) => {
+  const result = sp([], "KarnamehSummary");
+  result.then((r) => res.send(r));
+});
+
+// router.get("/bajemanabeh/:date", (req, res) => {
+//   const result = sp(
+//     [{ Date: req.params.date, dataType: sql.NVarChar(10) }],
+//     "BajeManabehGet"
+//   );
+//   result.then((r) => res.send(r));
+// });
+
+router.post("/karnamehread", (req, res) => {
+  console.log(req.body);
+  const result = sp(
+    [
+      { FileLocation: req.body.filelocation, dataType: sql.NVarChar(500) },
+      { Date: req.body.date, dataType: sql.NVarChar(10) },
+      { Type: req.body.type, dataType: sql.NVarChar(2) },
+    ],
+    "KarnamehReadFile"
+  );
+  result.then((r) => res.send(r));
+});
+
+router.get("/branchadditionsummary", (req, res) => {
+  const result = sp([], "BranchAdditionSummary");
+  result.then((r) => res.send(r));
+});
+router.post("/branchadditionread", (req, res) => {
+  console.log(req.body);
+  const result = sp(
+    [
+      { FileLocation: req.body.filelocation, dataType: sql.NVarChar(500) },
+      { Date: req.body.date, dataType: sql.NVarChar(10) },
+      { Type: req.body.type, dataType: sql.Int },
+    ],
+    "BranchAdditionReadFile"
+  );
+  result.then((r) => res.send(r));
+});
 module.exports = router;
